@@ -44,7 +44,9 @@ const AdminDashboard = () => {
     try {
       const payload = {
         vendor: formData.vendor.trim(),
-        vendors: formData.vendors.split(',').map(v => v.trim()).filter(Boolean),
+        vendors: formData.vendors
+          ? formData.vendors.split(',').map(v => v.trim()).filter(Boolean)
+          : [],
         name: formData.name.trim(),
         sku: formData.sku.trim(),
         description: formData.description.trim(),
@@ -53,8 +55,12 @@ const AdminDashboard = () => {
         image: formData.image.trim(),
         category: formData.category.trim(),
         quantity: parseInt(formData.quantity),
-        colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
-        sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean)
+        colors: formData.colors
+          ? formData.colors.split(',').map(c => c.trim()).filter(Boolean)
+          : [],
+        sizes: formData.sizes
+          ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean)
+          : []
       };
 
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, payload);
@@ -90,8 +96,9 @@ const AdminDashboard = () => {
           <tr>
             <th>Name</th>
             <th>Vendor</th>
-            <th>List Price</th>
+            <th>Additional Vendors</th>
             <th>Cost</th>
+            <th>List Price</th>
             <th>Quantity</th>
             <th>Category</th>
           </tr>
@@ -101,8 +108,9 @@ const AdminDashboard = () => {
             <tr key={product._id}>
               <td>{product.name}</td>
               <td>{product.vendor}</td>
-              <td>${product.listPrice.toFixed(2)}</td>
-              <td>${product.cost.toFixed(2)}</td>
+              <td>{product.vendors?.join(', ')}</td>
+              <td>${product.cost?.toFixed(2)}</td>
+              <td>${product.listPrice?.toFixed(2)}</td>
               <td>{product.quantity}</td>
               <td>{product.category}</td>
             </tr>
