@@ -65,7 +65,21 @@ const AdminDashboard = () => {
       };
 
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/products`, payload);
-      console.log('✅ Product added:', res.data);
+      console.log('✅ Product created:', res.data);
+      setFormData({
+        vendor: '',
+        vendors: '',
+        name: '',
+        sku: '',
+        description: '',
+        cost: '',
+        listPrice: '',
+        image: '',
+        category: '',
+        quantity: '',
+        colors: '',
+        sizes: ''
+      });
       fetchProducts();
     } catch (error) {
       console.error('❌ Failed to add product:', error);
