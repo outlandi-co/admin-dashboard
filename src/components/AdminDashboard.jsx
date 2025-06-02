@@ -21,7 +21,9 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
-      setProducts(res.data.products);
+      console.log('📦 Products fetched:', res.data);
+      const fetchedProducts = Array.isArray(res.data) ? res.data : res.data.products;
+      setProducts(fetchedProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
     }
