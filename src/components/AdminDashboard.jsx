@@ -101,8 +101,8 @@ const AdminDashboard = () => {
             <tr key={product._id}>
               <td>{product.name}</td>
               <td>{product.vendor}</td>
-              <td>${product.listPrice.toFixed(2)}</td>
-              <td>${product.cost.toFixed(2)}</td>
+              <td>${Number(product.listPrice).toFixed(2)}</td>
+              <td>${Number(product.cost).toFixed(2)}</td>
               <td>{product.quantity}</td>
               <td>{product.category}</td>
             </tr>
