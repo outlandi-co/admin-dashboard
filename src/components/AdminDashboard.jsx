@@ -20,7 +20,12 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
+        params: {
+          page: 1,
+          limit: 100
+        }
+      });
       console.log('📦 Products fetched:', res.data);
       const fetchedProducts = Array.isArray(res.data) ? res.data : res.data.products;
       setProducts(fetchedProducts);
@@ -99,16 +104,22 @@ const AdminDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {products.map(product => (
-            <tr key={product._id}>
-              <td>{product.name}</td>
-              <td>{product.vendor}</td>
-              <td>${Number(product.listPrice).toFixed(2)}</td>
-              <td>${Number(product.cost).toFixed(2)}</td>
-              <td>{product.quantity}</td>
-              <td>{product.category}</td>
+          {products.length > 0 ? (
+            products.map(product => (
+              <tr key={product._id}>
+                <td>{product.name}</td>
+                <td>{product.vendor}</td>
+                <td>${Number(product.listPrice).toFixed(2)}</td>
+                <td>${Number(product.cost).toFixed(2)}</td>
+                <td>{product.quantity}</td>
+                <td>{product.category}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6">No products found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
