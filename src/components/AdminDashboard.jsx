@@ -20,16 +20,10 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`
-, {
-        params: {
-          page: 1,
-          limit: 100
-        }
-      });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
       console.log('📦 Full Response:', res.data);
       const data = res.data;
-      const fetchedProducts = Array.isArray(data) ? data : data.products;
+      const fetchedProducts = Array.isArray(data) ? data : data.products || [];
       setProducts(fetchedProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
@@ -66,7 +60,7 @@ const AdminDashboard = () => {
         sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean)
       };
 
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/products`, payload);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, payload);
       console.log('✅ Product created:', res.data);
       setFormData({
         vendor: '',
