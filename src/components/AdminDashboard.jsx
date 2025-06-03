@@ -18,21 +18,21 @@ const AdminDashboard = () => {
     sizes: ''
   });
 
-const fetchProducts = async () => {
-  try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
-    console.log('📦 Full Response:', res.data);
-    const data = res.data;
-    const fetchedProducts = Array.isArray(data.products)
-      ? data.products
-      : Array.isArray(data)
-      ? data
-      : [];
-    setProducts(fetchedProducts);
-  } catch (error) {
-    console.error('❌ Failed to fetch products:', error);
-  }
-};
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+      console.log('📦 Full Response:', res.data);
+      const data = res.data;
+      const fetchedProducts = Array.isArray(data.products)
+        ? data.products
+        : Array.isArray(data)
+        ? data
+        : [];
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error('❌ Failed to fetch products:', error);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -43,6 +43,15 @@ const fetchProducts = async () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
+      fetchProducts();
+    } catch (error) {
+      console.error('❌ Failed to delete product:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -115,6 +124,7 @@ const fetchProducts = async () => {
             <th>Cost</th>
             <th>Quantity</th>
             <th>Category</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -127,11 +137,14 @@ const fetchProducts = async () => {
                 <td>${Number(product.cost).toFixed(2)}</td>
                 <td>{product.quantity}</td>
                 <td>{product.category}</td>
+                <td>
+                  <button onClick={() => handleDelete(product._id)}>Delete</button>
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="6">No products found.</td>
+              <td colSpan="7">No products found.</td>
             </tr>
           )}
         </tbody>
