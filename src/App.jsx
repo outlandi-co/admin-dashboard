@@ -1,5 +1,6 @@
-// src/App.jsx (updated)
-import React, { useState } from 'react';
+// src/App.jsx (corrected)
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import ProductForm from './components/ProductForm';
 import ProductTable from './components/ProductTable';
 import './App.css';
@@ -15,9 +16,27 @@ function App() {
     stock: ''
   });
 
-  const handleAddProduct = (newProduct) => {
-    setProducts((prevProducts) => [...prevProducts, newProduct]);
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+      setProducts(res.data.products || res.data); // Handle both { products: [...] } or raw array
+    } catch (error) {
+      console.error('❌ Failed to load products:', error.message);
+    }
   };
+
+  const handleAddProduct = async (newProduct) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, newProduct);
+      setProducts((prev) => [...prev, res.data.product || res.data]);
+    } catch (error) {
+      console.error('❌ Failed to add product:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <div className="app">
