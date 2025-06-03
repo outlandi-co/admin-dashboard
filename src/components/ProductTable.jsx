@@ -23,13 +23,9 @@ function ProductTable({ products }) {
                   src={product.image}
                   alt={product.name}
                   style={{ width: '60px', height: 'auto', objectFit: 'contain' }}
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/placeholder.png'; // fallback
-                  }}
                 />
               ) : (
-                'No image'
+                <span>No image</span>
               )}
             </td>
             <td>{product.name}</td>
@@ -40,7 +36,7 @@ function ProductTable({ products }) {
                 : 'N/A'}
             </td>
             <td>{product.category}</td>
-            <td>{product.quantity}</td>
+            <td>{product.quantity ?? 'N/A'}</td>
           </tr>
         ))}
       </tbody>
