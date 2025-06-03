@@ -18,17 +18,21 @@ const AdminDashboard = () => {
     sizes: ''
   });
 
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
-      console.log('📦 Full Response:', res.data);
-      const data = res.data;
-      const fetchedProducts = Array.isArray(data) ? data : data.products || [];
-      setProducts(fetchedProducts);
-    } catch (error) {
-      console.error('❌ Failed to fetch products:', error);
-    }
-  };
+const fetchProducts = async () => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+    console.log('📦 Full Response:', res.data);
+    const data = res.data;
+    const fetchedProducts = Array.isArray(data.products)
+      ? data.products
+      : Array.isArray(data)
+      ? data
+      : [];
+    setProducts(fetchedProducts);
+  } catch (error) {
+    console.error('❌ Failed to fetch products:', error);
+  }
+};
 
   useEffect(() => {
     fetchProducts();
