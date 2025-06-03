@@ -10,7 +10,9 @@ function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/forgot-password`, { email });
+      
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, { email });
+
       setMsg(res.data.message + ' Check your email or use this link: ' + res.data.resetLink);
       setError('');
     } catch (err) {

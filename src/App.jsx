@@ -17,7 +17,7 @@ function App() {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // 🆕 stores user info
+  const [user, setUser] = useState(null); // Stores user profile info
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -26,6 +26,7 @@ function App() {
       fetchUserProfile();
       fetchProducts();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUserProfile = async () => {
@@ -34,10 +35,10 @@ function App() {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setUser(res.data); // contains { id, username, email, role }
+      setUser(res.data);
     } catch (err) {
       console.error('🔐 Failed to fetch user profile:', err.message);
-      setIsLoggedIn(false);
+      handleLogout(); // If token is invalid, logout
     }
   };
 
@@ -86,7 +87,6 @@ function App() {
           </div>
           <h1>Admin Dashboard: Product Manager</h1>
 
-          {/* ✅ Only allow ProductForm if user is admin */}
           {user?.role === 'admin' ? (
             <ProductForm
               onAdd={handleAddProduct}
