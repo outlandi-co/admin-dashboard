@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import axios from 'axios';
-import { useState } from 'react';
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -18,16 +18,23 @@ const ProductForm = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in to add a product.');
+        return;
+      }
+
       const cost = parseFloat(formData.cost);
       const listPrice = parseFloat(formData.listPrice);
       const quantity = parseInt(formData.quantity);
@@ -42,12 +49,12 @@ const ProductForm = () => {
           ? formData.vendors.split(',').map(v => v.trim()).filter(Boolean)
           : [],
         name: formData.name.trim(),
-        sku: formData.sku.trim() || undefined,
-        description: formData.description.trim() || undefined,
+        sku: formData.sku?.trim() || undefined,
+        description: formData.description?.trim() || undefined,
         cost,
         listPrice,
-        image: formData.image.trim() || undefined,
-        category: formData.category.trim() || undefined,
+        image: formData.image?.trim() || undefined,
+        category: formData.category?.trim() || undefined,
         quantity,
         colors: formData.colors
           ? formData.colors.split(',').map(c => c.trim()).filter(Boolean)
@@ -58,8 +65,6 @@ const ProductForm = () => {
       };
 
       console.log('🧾 Payload:', payload);
-
-      const token = localStorage.getItem('token');
 
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/products`,
@@ -73,7 +78,9 @@ const ProductForm = () => {
       );
 
       console.log('✅ Product created:', res.data);
-      alert('Product successfully added!');
+      alert('✅ Product successfully added!');
+
+      // Reset form
       setFormData({
         vendor: '',
         vendors: '',
@@ -88,15 +95,16 @@ const ProductForm = () => {
         colors: '',
         sizes: ''
       });
+
     } catch (error) {
       if (error.response) {
         console.error('❌ Backend response error:', error.response.data);
         alert(error.response.data.message || 'Server error');
       } else if (error.request) {
         console.error('❌ No response from server:', error.request);
-        alert('Server not responding');
+        alert('No response from server');
       } else {
-        console.error('❌ Unexpected error:', error.message);
+        console.error('❌ Error:', error.message);
         alert(error.message);
       }
     }
