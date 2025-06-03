@@ -20,7 +20,8 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`
+, {
         params: {
           page: 1,
           limit: 100
