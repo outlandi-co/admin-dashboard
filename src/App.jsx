@@ -29,18 +29,18 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchUserProfile = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(res.data);
-    } catch (err) {
-      console.error('🔐 Failed to fetch user profile:', err.message);
-      handleLogout(); // If token is invalid, logout
-    }
-  };
+const fetchUserProfile = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setUser(res.data);
+  } catch (err) {
+    console.error('🔐 Failed to fetch user profile:', err.message);
+    handleLogout();
+  }
+};
 
   const fetchProducts = async () => {
     try {
