@@ -59,20 +59,45 @@ const ProductForm = () => {
 
       console.log('🧾 Payload:', payload);
 
+      const token = localStorage.getItem('token');
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/products`,
         payload,
-        { headers: { 'Content-Type': 'application/json' } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
 
       console.log('✅ Product created:', res.data);
+      alert('Product successfully added!');
+      setFormData({
+        vendor: '',
+        vendors: '',
+        name: '',
+        sku: '',
+        description: '',
+        cost: '',
+        listPrice: '',
+        image: '',
+        category: '',
+        quantity: '',
+        colors: '',
+        sizes: ''
+      });
     } catch (error) {
       if (error.response) {
         console.error('❌ Backend response error:', error.response.data);
+        alert(error.response.data.message || 'Server error');
       } else if (error.request) {
-        console.error('❌ No response received from server:', error.request);
+        console.error('❌ No response from server:', error.request);
+        alert('Server not responding');
       } else {
         console.error('❌ Unexpected error:', error.message);
+        alert(error.message);
       }
     }
   };
