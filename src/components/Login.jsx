@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -10,14 +9,14 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        { username, password }
+      );
 
       const token = response.data.token;
       localStorage.setItem('token', token);
-      onLogin();
+      onLogin(); // trigger dashboard access
     } catch  {
       setError('Invalid credentials. Please try again.');
     }

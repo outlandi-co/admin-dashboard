@@ -1,8 +1,8 @@
-// src/App.jsx (corrected)
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductForm from './components/ProductForm';
 import ProductTable from './components/ProductTable';
+import Login from './components/Login';
 import './App.css';
 
 function App() {
@@ -16,10 +16,35 @@ function App() {
     stock: ''
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null); // 🆕 stores user info
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+      fetchUserProfile();
+      fetchProducts();
+    }
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data); // contains { id, username, email, role }
+    } catch (err) {
+      console.error('🔐 Failed to fetch user profile:', err.message);
+      setIsLoggedIn(false);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
-      setProducts(res.data.products || res.data); // Handle both { products: [...] } or raw array
+      setProducts(res.data.products || res.data);
     } catch (error) {
       console.error('❌ Failed to load products:', error.message);
     }
@@ -27,26 +52,54 @@ function App() {
 
   const handleAddProduct = async (newProduct) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, newProduct);
+      const token = localStorage.getItem('token');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, newProduct, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setProducts((prev) => [...prev, res.data.product || res.data]);
     } catch (error) {
       console.error('❌ Failed to add product:', error.message);
     }
   };
 
-  useEffect(() => {
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    fetchUserProfile();
     fetchProducts();
-  }, []);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    setUser(null);
+    setProducts([]);
+  };
 
   return (
     <div className="app">
-      <h1>Admin Dashboard: Product Manager</h1>
-      <ProductForm
-        onAdd={handleAddProduct}
-        formData={formData}
-        setFormData={setFormData}
-      />
-      <ProductTable products={products} />
+      {!isLoggedIn ? (
+        <Login onLogin={handleLogin} />
+      ) : (
+        <>
+          <div style={{ textAlign: 'right' }}>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+          <h1>Admin Dashboard: Product Manager</h1>
+
+          {/* ✅ Only allow ProductForm if user is admin */}
+          {user?.role === 'admin' ? (
+            <ProductForm
+              onAdd={handleAddProduct}
+              formData={formData}
+              setFormData={setFormData}
+            />
+          ) : (
+            <p style={{ color: 'red' }}>🔒 Access denied: Admins only</p>
+          )}
+
+          <ProductTable products={products} />
+        </>
+      )}
     </div>
   );
 }

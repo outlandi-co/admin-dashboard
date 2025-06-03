@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+<button onClick={() => {
+  localStorage.removeItem('token');
+  window.location.reload(); // force logout
+}}>Logout</button>
+
+
 const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
   const [formData, setFormData] = useState({

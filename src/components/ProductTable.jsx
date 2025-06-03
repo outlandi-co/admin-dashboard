@@ -21,22 +21,22 @@ function ProductTable({ products }) {
               {product.image ? (
                 <img
                   src={product.image}
-                  alt={product.name}
+                  alt={product.name || 'Product image'}
                   style={{ width: '60px', height: 'auto', objectFit: 'contain' }}
                 />
               ) : (
                 <span>No image</span>
               )}
             </td>
-            <td>{product.name}</td>
-            <td>{product.description}</td>
+            <td>{product.name || 'N/A'}</td>
+            <td>{product.description || 'N/A'}</td>
             <td>
               {product.listPrice != null
                 ? `$${Number(product.listPrice).toFixed(2)}`
                 : 'N/A'}
             </td>
-            <td>{product.category}</td>
-            <td>{product.quantity ?? 'N/A'}</td>
+            <td>{product.category || 'N/A'}</td>
+            <td>{product.quantity != null ? product.quantity : 'N/A'}</td>
           </tr>
         ))}
       </tbody>
