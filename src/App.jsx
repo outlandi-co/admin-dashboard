@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import ProductForm from './components/ProductForm';
 import ProductTable from './components/ProductTable';
 import Login from './components/Login';
+import ResetPassword from './components/ResetPassword'; // ✅ Import ResetPassword
 import './App.css';
 
 function App() {
@@ -17,7 +19,8 @@ function App() {
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // Stores user profile info
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -26,21 +29,21 @@ function App() {
       fetchUserProfile();
       fetchProducts();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-const fetchUserProfile = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setUser(res.data);
-  } catch (err) {
-    console.error('🔐 Failed to fetch user profile:', err.message);
-    handleLogout();
-  }
-};
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUser(res.data);
+    } catch (err) {
+      console.error('🔐 Failed to fetch user profile:', err.message);
+      handleLogout();
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -74,32 +77,44 @@ const fetchUserProfile = async () => {
     setIsLoggedIn(false);
     setUser(null);
     setProducts([]);
+    navigate('/');
   };
 
   return (
     <div className="app">
-      {!isLoggedIn ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-        <>
-          <div style={{ textAlign: 'right' }}>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-          <h1>Admin Dashboard: Product Manager</h1>
+      <Routes>
+        {/* ✅ Route for password reset page */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-          {user?.role === 'admin' ? (
-            <ProductForm
-              onAdd={handleAddProduct}
-              formData={formData}
-              setFormData={setFormData}
-            />
-          ) : (
-            <p style={{ color: 'red' }}>🔒 Access denied: Admins only</p>
-          )}
+        {/* ✅ Main login/admin dashboard route */}
+        <Route
+          path="/"
+          element={
+            !isLoggedIn ? (
+              <Login onLogin={handleLogin} />
+            ) : (
+              <>
+                <div style={{ textAlign: 'right' }}>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+                <h1>Admin Dashboard: Product Manager</h1>
 
-          <ProductTable products={products} />
-        </>
-      )}
+                {user?.role === 'admin' ? (
+                  <ProductForm
+                    onAdd={handleAddProduct}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                ) : (
+                  <p style={{ color: 'red' }}>🔒 Access denied: Admins only</p>
+                )}
+
+                <ProductTable products={products} />
+              </>
+            )
+          }
+        />
+      </Routes>
     </div>
   );
 }
