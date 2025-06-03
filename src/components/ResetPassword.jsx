@@ -18,13 +18,17 @@ function ResetPassword() {
     setError('');
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/reset-password/${token}`, {
-        password,
-      });
+      console.log('🔁 Sending new password to:', token);
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/reset-password/${token}`,
+        { password }
+      );
+
       setMsg(res.data.message || 'Password reset successful');
       setPassword('');
-      setTimeout(() => navigate('/'), 2000);
+      setTimeout(() => navigate('/'), 2500);
     } catch (err) {
+      console.error('❌ Reset error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Reset failed');
     } finally {
       setLoading(false);
