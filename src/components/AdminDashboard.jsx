@@ -26,9 +26,10 @@ const AdminDashboard = () => {
           limit: 100
         }
       });
-      const { products } = res.data;
-      console.log('📦 Products fetched:', products);
-      setProducts(products);
+      console.log('📦 Full Response:', res.data);
+      const data = res.data;
+      const fetchedProducts = Array.isArray(data) ? data : data.products;
+      setProducts(fetchedProducts);
     } catch (error) {
       console.error('❌ Failed to fetch products:', error);
     }
