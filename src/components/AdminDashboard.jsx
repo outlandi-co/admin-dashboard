@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-<button onClick={() => {
-  localStorage.removeItem('token');
-  window.location.reload(); // force logout
-}}>Logout</button>
-
+import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -24,16 +19,15 @@ const AdminDashboard = () => {
     sizes: ''
   });
 
-const fetchProducts = async () => {
-  try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
-    console.log('📦 Full Response:', res.data);
-    const fetchedProducts = res.data.products || [];
-    setProducts(fetchedProducts);
-  } catch (error) {
-    console.error('❌ Failed to fetch products:', error);
-  }
-};
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/products`);
+      const fetchedProducts = res.data.products || [];
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error('❌ Failed to fetch products:', error);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -98,7 +92,18 @@ const fetchProducts = async () => {
 
   return (
     <div>
-      <h2>Admin Dashboard</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Admin Dashboard</h2>
+        <button onClick={() => {
+          localStorage.removeItem('token');
+          window.location.reload(); // force logout
+        }}>Logout</button>
+      </div>
+
+      <div style={{ marginBottom: '1rem' }}>
+        <Link to="/admin/artworks">📁 View Artwork Submissions</Link>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <input name="vendor" placeholder="Vendor *" value={formData.vendor} onChange={handleChange} required />
         <input name="vendors" placeholder="Additional Vendors (comma-separated)" value={formData.vendors} onChange={handleChange} />

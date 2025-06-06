@@ -1,5 +1,4 @@
-// src/components/ResetPassword.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,20 +10,32 @@ function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!token) {
+      setError('❌ Invalid or missing reset token.');
+    } else {
+      console.log('🧩 Reset token detected:', token);
+    }
+  }, [token]);
+
   const handleReset = async (e) => {
     e.preventDefault();
+    if (!token) {
+      setError('Invalid or expired reset token.');
+      return;
+    }
+
     setLoading(true);
     setMsg('');
     setError('');
 
     try {
-      console.log('🔁 Sending new password to:', token);
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/auth/reset-password/${token}`,
         { password }
       );
 
-      setMsg(res.data.message || 'Password reset successful');
+      setMsg(res.data.message || '✅ Password reset successful');
       setPassword('');
       setTimeout(() => navigate('/'), 2500);
     } catch (err) {
@@ -57,7 +68,7 @@ function ResetPassword() {
         </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !token}
           style={{
             width: '100%',
             padding: '10px',
@@ -66,12 +77,13 @@ function ResetPassword() {
             color: 'white',
             border: 'none',
             borderRadius: '5px',
-            cursor: 'pointer'
+            cursor: token ? 'pointer' : 'not-allowed'
           }}
         >
           {loading ? 'Resetting...' : 'Reset Password'}
         </button>
       </form>
+
       {msg && <p style={{ color: 'green', marginTop: 12 }}>{msg}</p>}
       {error && <p style={{ color: 'red', marginTop: 12 }}>{error}</p>}
     </div>
