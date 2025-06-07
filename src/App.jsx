@@ -93,7 +93,8 @@ function App() {
         {/* 🔑 Auth */}
         <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        {/* ✅ UPDATED RESET PASSWORD ROUTE */}
+        <Route path="/admin/reset-password/:token" element={<ResetPasswordPage />} />
 
         {/* 🛠 Admin Dashboard */}
         <Route
